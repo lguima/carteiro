@@ -1,84 +1,50 @@
 <?php
-/**
- * This example shows settings to use when sending via Google's Gmail servers.
- */
 
 require __DIR__.'/../env.php';
 require __DIR__.'/../vendor/autoload.php';
 
-//SMTP needs accurate times, and the PHP time zone MUST be set
-//This should be done in your php.ini, but this is how to do it if you don't have access to that
+session_start();
+
+if (!isset($_SESSION['access_token']) || !$_SESSION['access_token'])
+    header('Location: ' . filter_var('http://'. $_SERVER['HTTP_HOST'] .'/callback.php', FILTER_SANITIZE_URL));
+
 date_default_timezone_set('Etc/UTC');
 
-//Create a new PHPMailer instance
-$mail = new PHPMailerOAuth;
+$content = file_get_contents('templates/'. MAIL_TEMPLATE .'/index.html');
+$content = str_replace('{URL_TEMPLATE}', 'http://'. $_SERVER['HTTP_HOST'] .'/templates/'. MAIL_TEMPLATE .'/', $content);
 
-//Tell PHPMailer to use SMTP
-$mail->isSMTP();
-
-//Enable SMTP debugging
-$mail->SMTPDebug = 0;
-
-//How to handle debug output
-$mail->Debugoutput = 'html';
-
-//Set the hostname of the mail server
-$mail->Host = 'smtp.gmail.com';
-
-//Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
-$mail->Port = 587;
-
-//Set the encryption system to use - ssl (deprecated) or tls
-$mail->SMTPSecure = 'tls';
-
-//Whether to use SMTP authentication
-$mail->SMTPAuth = true;
-
-//Set AuthType
-$mail->AuthType = 'XOAUTH2';
-
-//User Email to use for SMTP authentication - Use the same email used in Google Developer Console
-$mail->oauthUserEmail = OAUTH_USER_EMAIL;
-
-//Obtained From Google Developer Console
-$mail->oauthClientId = OAUTH_CLIENT_ID;
-
-//Obtained From Google Developer Console
-$mail->oauthClientSecret = OAUTH_CLIENT_SECRET;
-
-//Obtained after setting up APP in Google Developer Console
-$mail->oauthRefreshToken = OAUTH_REFRESH_TOKEN;
-
-//Set who the message is to be sent from
-//For Gmail, this generally needs to be the same as the user you logged in as
+$mail = new PHPMailer();
+$mail->CharSet = 'UTF-8';
+$mail->Subject = MAIL_SUBJECT;
+$mail->msgHTML($content);
 $mail->setFrom(MAIL_FROM_ADDRESS, MAIL_FROM_NAME);
-
-//Set who the message is to be sent to
 $mail->addAddress(MAIL_FROM_ADDRESS, MAIL_FROM_NAME);
-
-//Set to who the message is to be reply to
 $mail->addReplyTo(MAIL_FROM_ADDRESS, MAIL_FROM_NAME);
 
 foreach (MAIL_RECIPIENTS as $recipient) {
     $mail->addBCC($recipient['address'], $recipient['name']);
 }
 
-//Set the subject line
-$mail->Subject = MAIL_SUBJECT;
+$mail->preSend();
+$mime = $mail->getSentMIMEMessage();
 
-//Set the message encoding
-$mail->CharSet = 'UTF-8';
+// web-safe base64
+$raw = rtrim(strtr(base64_encode($mime), '+/', '-_'), '=');
 
-//Read an HTML message body from an external file, convert referenced images to embedded,
-//convert HTML into a basic plain-text alternative body
-$mail->msgHTML(file_get_contents('../resources/templates/'. MAIL_TEMPLATE .'/index.html'), dirname(__FILE__));
+$message = new Google_Service_Gmail_Message();
+$message->setRaw($raw);
 
-//Replace the plain text body with one created manually
-$mail->AltBody = 'This is a plain-text message body';
+$client = new Google_Client();
+$client->setAuthConfigFile(__DIR__.'/../client_secret_'. OAUTH_CLIENT_ID .'.json');
+$client->addScope(Google_Service_Gmail::GMAIL_SEND);
+$client->setAccessType('offline');
 
-//send the message, check for errors
-if (!$mail->send()) {
-    echo "Mailer Error: " . $mail->ErrorInfo;
-} else {
-    echo "Message sent!";
+$client->setAccessToken($_SESSION['access_token']);
+$service = new Google_Service_Gmail($client);
+
+try {
+    $message = $service->users_messages->send('me', $message);
+    echo "Mensagem #{$message->getId()} entregue! :)";
+} catch (Exception $e) {
+    echo $e->getMessage();
 }
