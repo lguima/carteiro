@@ -1,4 +1,4 @@
-<p><a href="https://pt.wikipedia.org/wiki/Jaiminho,_o_Carteiro" targe="_blank"><img width="150"src="http://carteiro.lucasguima.com/images/carteiro.png"></a></p>
+<p><a href="https://pt.wikipedia.org/wiki/Jaiminho,_o_Carteiro" target="_blank"><img width="150"src="http://carteiro.lucasguima.com/images/carteiro.png"></a></p>
 
 # Carteiro - Para quem quer evitar a fadiga
 Alternativa simples a um serviço de envio de e-mail.
