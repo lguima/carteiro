@@ -8,7 +8,6 @@ session_start();
 $client = new Google_Client();
 $client->setAuthConfigFile(__DIR__.'/../client_secret_'. OAUTH_CLIENT_ID .'.json');
 $client->addScope(Google_Service_Gmail::GMAIL_SEND);
-$client->setAccessType('offline');
 $client->setRedirectUri('http://'. $_SERVER['HTTP_HOST'] .'/callback.php');
 
 if (!isset($_GET['code']))
