@@ -5,8 +5,10 @@ require __DIR__.'/../vendor/autoload.php';
 
 session_start();
 
-if (!isset($_SESSION['access_token']) || !$_SESSION['access_token'])
+if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
     header('Location: ' . filter_var('http://'. $_SERVER['HTTP_HOST'] .'/callback.php', FILTER_SANITIZE_URL));
+    exit;
+}
 
 date_default_timezone_set('Etc/UTC');
 
@@ -36,8 +38,7 @@ $message->setRaw($raw);
 
 $client = new Google_Client();
 $client->setAuthConfigFile(__DIR__.'/../client_secret_'. OAUTH_CLIENT_ID .'.json');
-$client->addScope(Google_Service_Gmail::GMAIL_SEND);
-$client->setAccessType('offline');
+$client->setScopes([Google_Service_Gmail::GMAIL_SEND]);
 
 $client->setAccessToken($_SESSION['access_token']);
 $service = new Google_Service_Gmail($client);

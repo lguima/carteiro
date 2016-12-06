@@ -9,6 +9,8 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
     header('Location: http://' . $_SERVER['HTTP_HOST'] . '/login.php');
     exit;
 }
+
+$send_email_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_Gmail::GMAIL_SEND) !== false;
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -45,7 +47,7 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="settings.php"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Configurações</a></li>
+                    <li class="active"><a href="#"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Configurações</a></li>
                     <li><a href="#" onclick="signOut()"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Sair</a></li>
                 </ul>
             </div>
@@ -56,11 +58,33 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
-                    <li class="active"><a href="#">Envio de e-mail <span class="sr-only">(current)</span></a></li>
+                    <li><a href="index.php">Envio de e-mail</a></li>
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Envio de e-mail</h1>
+                <h1 class="page-header">Configurações</h1>
+
+                <div id="alerts">
+                    <div id="enabled-send-email-alert" class="alert alert-success alert-dismissible hidden" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong>Envio habilitado!</strong> Agora você já pode começar a enviar e-mails.
+                    </div>
+                </div> <!-- /alerts -->
+
+                <h3>Conexões</h3>
+
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <h4 class="list-group-item-heading">Google <button class="btn btn-danger btn-sm pull-right" title="Desconectar" onclick="signOut(true)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></h4>
+                        <p class="list-group-item-text">
+                            <ul>
+                                <li>Você está conectado(a) com a sua conta Google.</li>
+                                <li id="enable-send-email" class="<?php echo $send_email_enabled ? 'hidden' : ''; ?>"><button class="btn btn-success" onclick="requestGmailSendPermission()">Habilitar o envio de e-mails</button></li>
+                                <li id="enabled-send-email" class="<?php echo !$send_email_enabled ? 'hidden' : ''; ?>">Você pode enviar e-mails.</li>
+                            </ul>
+                        </p>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

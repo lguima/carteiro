@@ -5,12 +5,10 @@ require __DIR__.'/../vendor/autoload.php';
 
 session_start();
 
-if (isset($_SESSION['google_sub']) && !empty($_SESSION['google_sub']))
-    header('Location: http://'. $_SERVER['HTTP_HOST'] .'/index.php');
-
-$signed_out = (isset($_SESSION['signed_out']) && $_SESSION['signed_out']);
-
-unset($_SESSION['signed_out']);
+if (isset($_SESSION['access_token']) && !empty($_SESSION['access_token'])) {
+    header('Location: http://' . $_SERVER['HTTP_HOST'] . '/index.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -24,23 +22,7 @@ unset($_SESSION['signed_out']);
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <style type="text/css">
-        body {
-            padding-top: 40px;
-            padding-bottom: 40px;
-            background-color: #FFF;
-        }
-        .signin {
-            max-width: 308px;
-            padding: 15px;
-            margin: 0 auto;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        #carteiro-signin {
-            margin-top: 50px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/login.css" />
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -51,15 +33,7 @@ unset($_SESSION['signed_out']);
 </head>
 <body>
     <div class="container">
-        <div id="access-denied" class="alert alert-success alert-dismissible <?php echo $signed_out ? '' : 'hide' ; ?>" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Pronto!</strong> Até logo!
-        </div>
-
-        <div id="access-denied" class="alert alert-info alert-dismissible hide" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Pode confiar!</strong> Nenhum dado seu será acessado.
-        </div>
+        <div id="alerts"></div>
 
         <div class="row signin">
             <div class="col-md-12">
@@ -77,40 +51,10 @@ unset($_SESSION['signed_out']);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
     <script type="text/javascript">
-        function onSuccess(googleUser) {
-            var id_token = googleUser.getAuthResponse().id_token;
-
-            $.post('sign-in.php', {"id_token": id_token}, function(data) {
-                if (data.id_token && data.id_token == id_token)
-                    window.location.replace('http://<?php echo $_SERVER['HTTP_HOST']; ?>/index.php');
-            }, 'json');
-        }
-
-        function onFailure(error) {
-            if (error.type == 'tokenFailed')
-                $('#access-denied').removeClass('hide');
-        }
-
-        function init() {
-            gapi.load('auth2', function() {
-                auth2 = gapi.auth2.init({
-                    client_id: '200909192167-qck6j2hh0kma3cg1h95p6n2k1e1o3jqd.apps.googleusercontent.com',
-                    fetch_basic_profile: false,
-                    scope: 'openid'
-                });
-            });
-
-            gapi.signin2.render('carteiro-signin', {
-                'width': 240,
-                'height': 50,
-                'longtitle': true,
-                'theme': 'dark',
-                'onsuccess': onSuccess,
-                'onfailure': onFailure
-            });
-        }
+        oauth_client_id = '<?php echo OAUTH_CLIENT_ID; ?>';
     </script>
-    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+    <script src="https://apis.google.com/js/platform.js?onload=initLogin" async defer></script>
 </body>
 </html>

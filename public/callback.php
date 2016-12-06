@@ -7,11 +7,13 @@ session_start();
 
 $client = new Google_Client();
 $client->setAuthConfigFile(__DIR__.'/../client_secret_'. OAUTH_CLIENT_ID .'.json');
-$client->addScope(Google_Service_Gmail::GMAIL_SEND);
+$client->setScopes([Google_Service_Gmail::GMAIL_SEND]);
 $client->setRedirectUri('http://'. $_SERVER['HTTP_HOST'] .'/callback.php');
 
-if (!isset($_GET['code']))
+if (!isset($_GET['code'])) {
     header('Location: ' . filter_var($client->createAuthUrl(), FILTER_SANITIZE_URL));
+    exit;
+}
 
 $client->authenticate($_GET['code']);
 

@@ -1,0 +1,15 @@
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #FFF;
+}
+.signin {
+    max-width: 308px;
+    padding: 15px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    text-align: center;
+}
+#carteiro-signin {
+    margin-top: 50px;
+}
