@@ -48,7 +48,7 @@ function signIn(auth_response) {
 
     $.post('http://'+ window.location.host +'/sign-in.php', {"auth_response": auth_response}, function(data) {
         if (data.id_token && data.id_token == id_token)
-            window.location.replace('http://'+ window.location.host +'/index.php');
+            window.location.replace('http://'+ window.location.host +'/settings.php');
     }, 'json');
 }
 

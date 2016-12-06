@@ -67,7 +67,7 @@ $send_email_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_
                 <div id="alerts">
                     <div id="enabled-send-email-alert" class="alert alert-success alert-dismissible hidden" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong>Envio habilitado!</strong> Agora você já pode começar a enviar e-mails.
+                        <strong>Envio habilitado!</strong> Agora você já pode começar a <a href="index.php" class="alert-link">enviar e-mails</a>.
                     </div>
                 </div> <!-- /alerts -->
 
