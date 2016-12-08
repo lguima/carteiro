@@ -9,6 +9,8 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
     header('Location: http://' . $_SERVER['HTTP_HOST'] . '/login.php');
     exit;
 }
+
+$send_email_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_Gmail::GMAIL_SEND) !== false;
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -18,7 +20,7 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="google-signin-client_id" content="200909192167-qck6j2hh0kma3cg1h95p6n2k1e1o3jqd.apps.googleusercontent.com">
-    <title>Carteiro - Para quem quer evitar a fadiga</title>
+    <title>Painel | Carteiro</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -41,7 +43,7 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Carteiro</a>
+                <a class="navbar-brand" href="index.php">Carteiro</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
@@ -56,11 +58,19 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
-                    <li class="active"><a href="#">Envio de e-mail <span class="sr-only">(current)</span></a></li>
+                    <li class="active"><a href="index.php">Painel <span class="sr-only">(current)</span></a></li>
+                    <li><a href="email-create.php">Envio de e-mail</a></li>
                 </ul>
             </div>
+
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Envio de e-mail</h1>
+                <h1 class="page-header">Painel</h1>
+
+                <div id="alerts">
+                    <div id="enable-send-email" class="alert alert-info <?php echo $send_email_enabled ? 'hidden' : ''; ?>" role="alert">
+                        <strong>Falta pouco!</strong> É necessário habilitar o envio de e-mail em <a href="settings.php" class="alert-link">suas configurações</a>.
+                    </div>
+                </div> <!-- /alerts -->
             </div>
         </div>
     </div>
@@ -69,6 +79,7 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
     <script type="text/javascript" src="js/scripts.js"></script>
     <script type="text/javascript">
         oauth_client_id = '<?php echo OAUTH_CLIENT_ID; ?>';

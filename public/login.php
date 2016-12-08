@@ -9,6 +9,10 @@ if (isset($_SESSION['access_token']) && !empty($_SESSION['access_token'])) {
     header('Location: http://' . $_SERVER['HTTP_HOST'] . '/index.php');
     exit;
 }
+
+$revoked_access = isset($_SESSION['revoked_access']) && $_SESSION['revoked_access'];
+
+unset($_SESSION['revoked_access']);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -33,7 +37,12 @@ if (isset($_SESSION['access_token']) && !empty($_SESSION['access_token'])) {
 </head>
 <body>
     <div class="container">
-        <div id="alerts"></div>
+        <div id="alerts">
+            <div class="alert alert-success alert-dismissible <?php echo !$revoked_access ? 'hidden' : ''; ?>" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Conta desconectada!</strong> Fique à vontade para voltar a qualquer momento!
+            </div>
+        </div> <!-- /alerts -->
 
         <div class="row signin">
             <div class="col-md-12">

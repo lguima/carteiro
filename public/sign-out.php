@@ -32,8 +32,10 @@ if (strpos($payload['aud'], OAUTH_CLIENT_ID) === false) {
     exit;
 }
 
-if ($revoke_token)
+if ($revoke_token) {
     $client->revokeToken($_SESSION['access_token']);
+    $_SESSION['revoked_access'] = true;
+}
 
 unset($_SESSION['access_token']);
 

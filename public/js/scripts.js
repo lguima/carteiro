@@ -48,7 +48,7 @@ function signIn(auth_response) {
 
     $.post('http://'+ window.location.host +'/sign-in.php', {"auth_response": auth_response}, function(data) {
         if (data.id_token && data.id_token == id_token)
-            window.location.replace('http://'+ window.location.host +'/settings.php');
+            window.location.replace('http://'+ window.location.host +'/index.php');
     }, 'json');
 }
 
@@ -68,6 +68,27 @@ function signOut(revoke_token = false) {
             });
         }
     }, 'json');
+}
+
+function revokeAccess() {
+    bootbox.confirm({
+        backdrop: true,
+        title : "Desconectar",
+        message: "<p>Sem a sua conta Google não é possível utilizar o Carteiro.</p><p><b>Tem certeza que deseja desconectar?</b></p>",
+        buttons: {
+            confirm: {
+                label: 'Sim, desconectar',
+                className: 'btn-danger'
+            },
+            cancel: {
+                label: 'Cancelar'
+            }
+        },
+        callback: function (confirmed) {
+            if (confirmed)
+                signOut(true);
+        }
+    });
 }
 
 function requestGmailSendPermission() {
