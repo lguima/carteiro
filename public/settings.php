@@ -10,7 +10,8 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
     exit;
 }
 
-$send_email_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_Gmail::GMAIL_SEND) !== false;
+$gmail_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_Gmail::GMAIL_SEND) !== false;
+$drive_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_Drive::DRIVE) !== false;
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -66,27 +67,49 @@ $send_email_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">Configurações</h1>
 
-                <div id="alerts">
-                    <div id="enabled-send-email-alert" class="alert alert-success alert-dismissible hidden" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong>Envio habilitado!</strong> Agora você já pode começar a <a href="email-create.php" class="alert-link">enviar e-mails</a>.
-                    </div>
-                </div> <!-- /alerts -->
+                <div id="alerts"></div> <!-- /alerts -->
 
-                <h3>Conexões</h3>
+                <h3>Conexão</h3>
 
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <h4 class="list-group-item-heading">Google <button class="btn btn-danger btn-sm pull-right" title="Desconectar" onclick="revokeAccess()"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></h4>
-                        <p class="list-group-item-text">
-                            <ul>
-                                <li>Você está conectado(a) com a sua conta Google.</li>
-                                <li id="enable-send-email" class="<?php echo $send_email_enabled ? 'hidden' : ''; ?>"><button class="btn btn-success" onclick="requestGmailSendPermission()">Habilitar o envio de e-mails</button></li>
-                                <li id="enabled-send-email" class="<?php echo !$send_email_enabled ? 'hidden' : ''; ?>">Você pode enviar e-mails.</li>
-                            </ul>
-                        </p>
-                    </li>
-                </ul>
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading"><strong>Google</strong><button class="btn btn-danger btn-xs pull-right" title="Desconectar" onclick="revokeAccess()"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></div>
+
+                    <!-- Table -->
+                    <table class="table">
+                        <tr>
+                            <td class="col-md-1 text-center"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></td>
+                            <td class="col-md-10">
+                                Você está conectado(a) com a sua conta Google.
+                            </td>
+                            <td class="col-md-1 text-center">
+                                <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></td>
+                            <td>
+                                <span id="gmail-not-enabled-text" class="text-info <?php echo $gmail_enabled ? 'hidden' : ''; ?>">Você ainda não pode enviar e-mails.</span>
+                                <span id="gmail-enabled-text" class="<?php echo !$gmail_enabled ? 'hidden' : ''; ?>">Você pode enviar e-mails.</span>
+                            </td>
+                            <td class="text-center">
+                                <button id="gmail-not-enabled-button" class="btn btn-info btn-xs <?php echo $gmail_enabled ? 'hidden' : ''; ?>" onclick="requestGmailPermission()" title="Habilitar o envio de e-mails">Habilitar</button>
+                                <span id="gmail-enabled-check" class="glyphicon glyphicon-ok text-success <?php echo !$gmail_enabled ? 'hidden' : ''; ?>" aria-hidden="true"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></td>
+                            <td>
+                                <span id="drive-not-enabled-text" class="text-info <?php echo $drive_enabled ? 'hidden' : ''; ?>">Você ainda não pode armazenar arquivos.</span>
+                                <span id="drive-enabled-text" class="<?php echo !$drive_enabled ? 'hidden' : ''; ?>">Você pode armazenar arquivos.</span>
+                            </td>
+                            <td class="text-center">
+                                <button id="drive-not-enabled-button" class="btn btn-info btn-xs <?php echo $drive_enabled ? 'hidden' : ''; ?>" onclick="requestDrivePermission()" title="Habilitar o armazenamento de arquivos">Habilitar</button>
+                                <span id="drive-enabled-check" class="glyphicon glyphicon-ok text-success <?php echo !$drive_enabled ? 'hidden' : ''; ?>" aria-hidden="true"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -9,8 +9,6 @@ if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
     header('Location: http://' . $_SERVER['HTTP_HOST'] . '/login.php');
     exit;
 }
-
-$send_email_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_Gmail::GMAIL_SEND) !== false;
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -66,11 +64,7 @@ $send_email_enabled = strpos($_SESSION['access_token']['scope'], Google_Service_
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <h1 class="page-header">Painel</h1>
 
-                <div id="alerts">
-                    <div id="enable-send-email" class="alert alert-info <?php echo $send_email_enabled ? 'hidden' : ''; ?>" role="alert">
-                        <strong>Falta pouco!</strong> É necessário habilitar o envio de e-mail em <a href="settings.php" class="alert-link">suas configurações</a>.
-                    </div>
-                </div> <!-- /alerts -->
+                <div id="alerts"></div> <!-- /alerts -->
             </div>
         </div>
     </div>

@@ -37,6 +37,8 @@ function userListener(googleUser) {
     var id_token = auth_response.id_token;
 
     $.post('http://'+ window.location.host +'/sign-in.php', {"auth_response": auth_response}, null, 'json');
+
+    granted_addicional_permission = false;
 }
 
 function onLoginSuccess(googleUser) {
@@ -53,12 +55,15 @@ function signIn(auth_response) {
 }
 
 function onLoginFailure(error) {
-    if (error.type == 'tokenFailed' && !$('#alerts #access-denied').length) {
-        $('#alerts').append('<div id="access-denied" class="alert alert-info alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Pode confiar!</strong> Esta permissão não dá acesso a nenhum dado seu.</div>');
+    if (error.type == 'tokenFailed' && !$('#login-access-denied').length) {
+        $('#alerts').prepend('<div id="login-access-denied" class="alert alert-info alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Pode confiar!</strong> Esta permissão não dá acesso a nenhum dado seu.</div>');
     }
 }
 
 function signOut(revoke_token = false) {
+    if (revoke_token)
+        auth2.disconnect();
+
     var id_token = auth2.currentUser.get().getAuthResponse().id_token;
 
     $.post('http://'+ window.location.host +'/sign-out.php', {"id_token": id_token, "revoke_token": revoke_token}, function(data) {
@@ -91,26 +96,60 @@ function revokeAccess() {
     });
 }
 
-function requestGmailSendPermission() {
+/* Gmail */
+function requestGmailPermission() {
     googleUser = auth2.currentUser.get();
 
     googleUser.grant({
         scope: 'https://www.googleapis.com/auth/gmail.send'
-    }).then(onPermissionSuccess, onPermissionFailure);
+    }).then(onGmailPermissionSuccess, onGmailPermissionFailure);
 }
 
-function onPermissionSuccess(auth_response) {
+function onGmailPermissionSuccess() {
     granted_addicional_permission = true;
 
-    if ($('#alerts #access-denied').length)
-        $('#access-denied').remove();
+    if ($('#gmail-denied-alert').length)
+        $('#gmail-access-denied').remove();
 
-    $('#enable-send-email').remove();
-    $('#enabled-send-email').removeClass('hidden');
-    $('#enabled-send-email-alert').removeClass('hidden');
+    $('#gmail-not-enabled-button').fadeOut(function(){
+        $('#gmail-enabled-check').hide().removeClass('hidden').fadeIn();
+    });
+
+    $('#gmail-not-enabled-text').fadeOut(function(){
+        $('#gmail-enabled-text').hide().removeClass('hidden').fadeIn();
+    });
 }
 
-function onPermissionFailure(error) {
-    if (error.type == 'tokenFailed' && !$('#alerts #access-denied').length)
-        $('#alerts').append('<div id="access-denied" class="alert alert-info alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Pode confiar!</strong> Somente enviaremos e-mails que você solicitar.</div>');
+function onGmailPermissionFailure(error) {
+    if (error.type == 'tokenFailed' && !$('#gmail-access-denied').length)
+        $('#alerts').prepend('<div id="gmail-access-denied" class="alert alert-info alert-dismissible access-denied-alert" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Não se preocupe!</strong> Somente enviaremos e-mails que você solicitar.</div>');
+}
+
+/* Google Drive */
+function requestDrivePermission() {
+    googleUser = auth2.currentUser.get();
+
+    googleUser.grant({
+        scope: 'https://www.googleapis.com/auth/drive'
+    }).then(onDrivePermissionSuccess, onDrivePermissionFailure);
+}
+
+function onDrivePermissionSuccess() {
+    granted_addicional_permission = true;
+
+    if ($('#drive-access-denied').length)
+        $('#drive-access-denied').remove();
+
+    $('#drive-not-enabled-button').fadeOut(function(){
+        $('#drive-enabled-check').hide().removeClass('hidden').fadeIn();
+    });
+
+    $('#drive-not-enabled-text').fadeOut(function(){
+        $('#drive-enabled-text').hide().removeClass('hidden').fadeIn();
+    });
+}
+
+function onDrivePermissionFailure(error) {
+    if (error.type == 'tokenFailed' && !$('#drive-access-denied').length)
+        $('#alerts').prepend('<div id="drive-access-denied" class="alert alert-info alert-dismissible access-denied-alert" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Fique tranquilo(a)!</strong> Armazenaremos apenas os arquivos necessários para enviar seus e-mails.</div>');
 }
