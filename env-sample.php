@@ -1,7 +1,8 @@
 <?php
 
-/* OAuth */
-const OAUTH_CLIENT_ID = 'SomeRandomString.apps.googleusercontent.com';
+/* Google */
+const GOOGLE_API_KEY = 'SomeRandomString';
+const GOOGLE_CLIENT_ID = 'SomeRandomString.apps.googleusercontent.com';
 
 /* Mailing */
 const MAIL_FROM_ADDRESS = 'from@example.com';
