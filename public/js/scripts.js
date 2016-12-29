@@ -1,10 +1,10 @@
-var oauth_client_id = '';
+var google_client_id = '';
 var granted_addicional_permission = false;
 
 function init() {
     gapi.load('auth2', function() {
         auth2 = gapi.auth2.init({
-            client_id: oauth_client_id,
+            client_id: google_client_id,
             fetch_basic_profile: false,
             scope: 'openid'
         });
