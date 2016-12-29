@@ -27,7 +27,7 @@ try {
     exit;
 }
 
-if (strpos($payload['aud'], OAUTH_CLIENT_ID) === false) {
+if (strpos($payload['aud'], GOOGLE_CLIENT_ID) === false) {
     header('HTTP/1.0 404 Not Found');
     exit;
 }
