@@ -37,7 +37,7 @@ $message = new Google_Service_Gmail_Message();
 $message->setRaw($raw);
 
 $client = new Google_Client();
-$client->setAuthConfigFile(__DIR__.'/../client_secret_'. OAUTH_CLIENT_ID .'.json');
+$client->setAuthConfigFile(__DIR__.'/../client_secret_'. GOOGLE_CLIENT_ID .'.json');
 $client->setScopes([Google_Service_Gmail::GMAIL_SEND]);
 
 $client->setAccessToken($_SESSION['access_token']);
