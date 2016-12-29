@@ -6,7 +6,7 @@ require __DIR__.'/../vendor/autoload.php';
 session_start();
 
 $client = new Google_Client();
-$client->setAuthConfigFile(__DIR__.'/../client_secret_'. OAUTH_CLIENT_ID .'.json');
+$client->setAuthConfigFile(__DIR__.'/../client_secret_'. GOOGLE_CLIENT_ID .'.json');
 $client->setScopes([Google_Service_Gmail::GMAIL_SEND]);
 $client->setRedirectUri('http://'. $_SERVER['HTTP_HOST'] .'/callback.php');
 
