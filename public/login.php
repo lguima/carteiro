@@ -21,7 +21,7 @@ unset($_SESSION['revoked_access']);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="google-signin-client_id" content="200909192167-qck6j2hh0kma3cg1h95p6n2k1e1o3jqd.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="<?php echo GOOGLE_CLIENT_ID; ?>">
     <title>Carteiro - Para quem quer evitar a fadiga</title>
 
     <!-- Bootstrap -->
@@ -62,7 +62,7 @@ unset($_SESSION['revoked_access']);
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" src="js/scripts.js"></script>
     <script type="text/javascript">
-        oauth_client_id = '<?php echo OAUTH_CLIENT_ID; ?>';
+        google_client_id = '<?php echo GOOGLE_CLIENT_ID; ?>';
     </script>
     <script src="https://apis.google.com/js/platform.js?onload=initLogin" async defer></script>
 </body>
